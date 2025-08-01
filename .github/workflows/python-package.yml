@@ -1,5 +1,4 @@
-# This workflow will install Python dependencies and run tests on multiple Python versions.
-name: Python package
+name: Python package (Titanic-Project as working dir)
 
 on:
   push:
@@ -10,30 +9,36 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [ "3.8", "3.9", "3.10" ]
-
+    defaults:
+      run:
+        working-directory: Titanic-Project   # <— all run steps happen here
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.10"
+
+      - name: Debug — list files
+        run: |
+          echo "workspace: $GITHUB_WORKSPACE"
+          pwd
+          ls -la
+          find . -maxdepth 4 -type f | sort
 
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install -r Titanic-Project/requirements/requirements.txt
-          pip install -r Titanic-Project/requirements/test_requirements.txt
+          pip install -r requirements/requirements.txt
+          pip install -r requirements/test_requirements.txt
 
+      # Optional: train if this script exists
       - name: Train pipeline
         run: |
-          python project_with_test/titanic_model/train_pipeline.py
+          python titanic_model/train_pipeline.py
 
-      - name: Test with pytest
+      - name: Run tests
         run: |
-          python -m pytest -q
+          python -m pytest -q tests
