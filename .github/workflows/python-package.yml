@@ -1,4 +1,4 @@
-name: Python package (Titanic-Project as working dir)
+name: Python package (full paths to Titanic-Project)
 
 on:
   push:
@@ -9,9 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: Titanic-Project   # <— all run steps happen here
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -31,14 +28,14 @@ jobs:
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements/requirements.txt
-          pip install -r requirements/test_requirements.txt
+          pip install -r Titanic-Project/requirements/requirements.txt
+          pip install -r Titanic-Project/requirements/test_requirements.txt
 
       # Optional: train if this script exists
       - name: Train pipeline
         run: |
-          python titanic_model/train_pipeline.py
+          python Titanic-Project/titanic_model/train_pipeline.py
 
       - name: Run tests
         run: |
-          python -m pytest -q tests
+          python -m pytest -q Titanic-Project/tests
